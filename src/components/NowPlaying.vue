@@ -1,98 +1,71 @@
 <script setup lang="ts">
-import { onMounted, ref, type VNodeRef } from "vue";
+import { onMounted, ref } from "vue";
 
 //@ts-ignore
-import { musicStore } from "@/stores/MusicStore";
+import { musicControllerStore } from "@/stores/MusicControllerStore";
+import ProgressBar from "./ProgressBar.vue";
+import VolumeDisplay from "./VolumeDisplay.vue";
 
-const currentTime = ref(0);
-
-const audioPlayer = ref<VNodeRef | null>(null);
-
-const playPreviousSong = () => {
-  if (audioPlayer.value?.currentTime > 3) {
-    audioPlayer.value.currentTime = 0;
-    return;
-  }
-
-  const previousSongIndex =
-    musicStore.songs.findIndex((song) => song.id === musicStore.currentSong.id) - 1;
-
-  musicStore.setCurrentSong(
-    musicStore.songs[(previousSongIndex + musicStore.songs.length) % musicStore.songs.length]
-  );
-
-  audioPlayer.value?.load();
-  audioPlayer.value?.play();
-};
-
-const playNextSong = () => {
-  const nextSongIndex =
-    musicStore.songs.findIndex((song) => song.id === musicStore.currentSong.id) + 1;
-
-  musicStore.setCurrentSong(musicStore.songs[nextSongIndex % musicStore.songs.length]);
-
-  audioPlayer.value?.load();
-  audioPlayer.value?.play();
-};
-
-const togglePlayPause = () => {
-  if (audioPlayer.value?.paused) {
-    audioPlayer.value?.play();
-    return;
-  }
-
-  audioPlayer.value?.pause();
-};
+const audioPlayer = ref<HTMLAudioElement | null>(null);
 
 onMounted(() => {
-  audioPlayer.value.volume = 0.1;
-  audioPlayer.value?.addEventListener("ended", playNextSong);
-
-  const currentTimeInterval = setInterval(() => {
-    currentTime.value = audioPlayer.value?.currentTime || 0;
-  }, 100);
-
-  return () => {
-    clearInterval(currentTimeInterval);
-  };
+  if (audioPlayer.value) {
+    musicControllerStore.initAudioPlayer(audioPlayer.value);
+  }
 });
 </script>
 
 <template>
   <div class="player-container">
-    <h2>Current Song: {{ musicStore.currentSong.title }}</h2>
-    <h2>Current Artist: {{ musicStore.currentSong.artist }}</h2>
-    <h2>Current Album: {{ musicStore.currentSong.album }}</h2>
+    <h2>Current Song: {{ musicControllerStore.currentSong.title }}</h2>
+    <h2>Current Artist: {{ musicControllerStore.currentSong.artist }}</h2>
+    <h2>Current Album: {{ musicControllerStore.currentSong.album }}</h2>
     <div class="interface-container">
       <div class="button-container">
-        <button @click="playPreviousSong">Previous Song</button>
-        <button @click="togglePlayPause">Play/Pause</button>
-        <button @click="playNextSong">Next Song</button>
+        <button @click="musicControllerStore.playPreviousSong">Previous Song</button>
+        <button @click="musicControllerStore.togglePlaying" v-if="musicControllerStore.audioPlayer">
+          {{ !musicControllerStore.isPlaying ? "Play" : "Pause" }}
+        </button>
+        <button @click="musicControllerStore.playNextSong">Next Song</button>
+        <VolumeDisplay />
       </div>
-      <audio ref="audioPlayer">
+      <audio ref="audioPlayer" preload="auto">
         <source
-          :key="musicStore.currentSong.id"
-          :src="musicStore.currentSong.url"
+          :key="musicControllerStore.currentSong.id"
+          :src="musicControllerStore.currentSong.url"
           type="audio/ogg"
         />
       </audio>
-      <div
-        class="bar"
-        v-if="audioPlayer"
-        @click="
+      <div class="time-container">
+        <span
+          >{{ Math.floor(musicControllerStore.currentTime / 60) }}:{{
+            Math.floor(musicControllerStore.currentTime % 60)
+              .toString()
+              .padStart(2, "0")
+          }}
+          / {{ Math.floor(musicControllerStore.currentSong.duration / 60) }}:{{
+            Math.floor(musicControllerStore.currentSong.duration % 60)
+              .toString()
+              .padStart(2, "0")
+          }}</span
+        >
+      </div>
+      <ProgressBar
+        :onClick="
           (event: any) =>
-            (audioPlayer.currentTime =
+            musicControllerStore.seekTo(
               (event.offsetX /
                 (event.target.classList.contains('bar') ? event.target : event.target.parentElement)
                   .clientWidth) *
-              audioPlayer.duration)
+                musicControllerStore.currentSong.duration
+            )
         "
-      >
-        <div
-          class="filled-bar"
-          :style="`width: ${Math.floor((currentTime / musicStore.currentSong.duration) * 100)}%`"
-        ></div>
-      </div>
+        :progressPercentage="
+          Math.floor(
+            (musicControllerStore.currentTime / musicControllerStore.currentSong.duration) * 100
+          )
+        "
+      />
     </div>
   </div>
 </template>
@@ -101,7 +74,6 @@ onMounted(() => {
 .player-container {
   width: 100%;
   height: 100%;
-  background-color: #000;
 
   display: flex;
   flex-direction: column;
@@ -112,18 +84,19 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-}
 
-.bar {
-  width: 80%;
-  height: 10px;
-  background-color: white;
-  border-radius: 50px;
-}
+  .button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 
-.filled-bar {
-  height: 100%;
-  background-color: red;
-  border-radius: 50px;
+    * {
+      margin: 0 1rem;
+      flex-grow: 1;
+    }
+
+  }
 }
 </style>

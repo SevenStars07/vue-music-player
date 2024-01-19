@@ -7,7 +7,7 @@ import { RouterLink, RouterView } from 'vue-router';
     <RouterLink to="/">Player</RouterLink >
     <RouterLink to="/settings">Settings</RouterLink>
   </nav>
-  <RouterView class="router-view" />
+  <RouterView class="router-view"/>
 </template>
 
 <style scoped>
@@ -23,6 +23,11 @@ nav {
 
   display: flex;
   flex-direction: column;
+
+  * {
+    padding: 1rem;
+    border-radius: 5px;
+  }
 }
 
 nav a.router-link-exact-active {
