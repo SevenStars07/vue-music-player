@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <div
     class="song"
-    :style="{ color: song.id === musicControllerStore.currentSong.id ? 'red' : 'white' }"
+    :style="{ color: song.id === musicControllerStore.currentSong.id ? '#1db954' : 'white' }"
     @click="
       () => {
         musicControllerStore.setCurrentSong(song);

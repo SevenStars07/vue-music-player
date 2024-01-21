@@ -7,6 +7,17 @@
   font-weight: normal;
 }
 
+svg {
+  width: 50px;
+  height: 50px;
+  fill: white;
+  cursor: pointer;
+}
+
+svg:hover {
+  fill: #1db954;
+}
+
 a,
 .green {
   text-decoration: none;

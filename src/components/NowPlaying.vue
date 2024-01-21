@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-//@ts-ignore
 import { musicControllerStore } from "@/stores/MusicControllerStore";
 import ProgressBar from "./ProgressBar.vue";
 import VolumeDisplay from "./VolumeDisplay.vue";
+import IconPrevious from "./icons/IconPrevious.vue";
+import IconNext from "./icons/IconNext.vue";
+import IconPlay from "./icons/IconPlay.vue";
+import IconPause from "./icons/IconPause.vue";
 
 const audioPlayer = ref<HTMLAudioElement | null>(null);
 
@@ -22,11 +25,13 @@ onMounted(() => {
     <h2>Current Album: {{ musicControllerStore.currentSong.album }}</h2>
     <div class="interface-container">
       <div class="button-container">
-        <button @click="musicControllerStore.playPreviousSong">Previous Song</button>
-        <button @click="musicControllerStore.togglePlaying" v-if="musicControllerStore.audioPlayer">
-          {{ !musicControllerStore.isPlaying ? "Play" : "Pause" }}
-        </button>
-        <button @click="musicControllerStore.playNextSong">Next Song</button>
+        <IconPrevious @click="() => musicControllerStore.playPreviousSong()" />
+        <IconPlay
+          v-if="!musicControllerStore.isPlaying"
+          @click="() => musicControllerStore.togglePlaying()"
+        />
+        <IconPause v-else @click="() => musicControllerStore.togglePlaying()" />
+        <IconNext @click="() => musicControllerStore.playNextSong()" />
         <VolumeDisplay />
       </div>
       <audio ref="audioPlayer" preload="auto">
@@ -51,7 +56,7 @@ onMounted(() => {
         >
       </div>
       <ProgressBar
-        :onClick="
+        @click="
           (event: any) =>
             musicControllerStore.seekTo(
               (event.offsetX /
@@ -77,6 +82,8 @@ onMounted(() => {
 
   display: flex;
   flex-direction: column;
+
+  color: white;
 }
 
 .interface-container {
@@ -96,7 +103,8 @@ onMounted(() => {
       margin: 0 1rem;
       flex-grow: 1;
     }
-
   }
 }
+
+
 </style>
