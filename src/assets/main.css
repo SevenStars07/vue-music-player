@@ -3,13 +3,12 @@
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
 }
 
 svg {
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   fill: white;
   cursor: pointer;
 }
@@ -21,7 +20,7 @@ svg:hover {
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: white;
   transition: 0.4s;
   padding: 3px;
 }
@@ -39,12 +38,10 @@ a,
   }
 
   #app {
-
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-
-    padding: 0 2rem;
   }
 }
+

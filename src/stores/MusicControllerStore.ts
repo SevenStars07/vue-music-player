@@ -3,7 +3,7 @@ import { reactive } from "vue";
 
 import { musicStore } from "./MusicStore";
 
-interface MusicControllerStoreInterface {
+type MusicControllerStoreInterface = {
   audioPlayer?: HTMLAudioElement;
   currentSong: Song;
   currentTime: number;
@@ -22,7 +22,7 @@ interface MusicControllerStoreInterface {
   playNextSong(): void;
 
   seekTo(time: number): void;
-}
+};
 
 export const musicControllerStore = reactive<MusicControllerStoreInterface>({
   currentSong: musicStore.songs[0],

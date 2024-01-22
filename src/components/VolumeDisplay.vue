@@ -6,7 +6,7 @@ import IconVolumeMuted from "./icons/IconVolumeMuted.vue";
 </script>
 
 <template>
-  <div class="volume-container">
+  <div class="volume">
     <IconVolumeMuted
       v-if="musicControllerStore.isMuted"
       :onClick="() => musicControllerStore.toggleMuted()"
@@ -25,13 +25,13 @@ import IconVolumeMuted from "./icons/IconVolumeMuted.vue";
           );
         }
       "
-      :progressPercentage="musicControllerStore.volume * 100"
+      :progressPercentage="musicControllerStore.isMuted ? 0 : musicControllerStore.volume * 100"
     />
   </div>
 </template>
 
 <style scoped>
-.volume-container {
+.volume {
   display: flex;
   flex-direction: row;
   justify-content: center;

@@ -20,9 +20,15 @@ onMounted(() => {
 
 <template>
   <div class="player-container">
-    <h2>Current Song: {{ musicControllerStore.currentSong.title }}</h2>
-    <h2>Current Artist: {{ musicControllerStore.currentSong.artist }}</h2>
-    <h2>Current Album: {{ musicControllerStore.currentSong.album }}</h2>
+    <div class="current-song-container">
+      <img
+        src="https://mir-s3-cdn-cf.behance.net/project_modules/hd/602f4731226337.5646928c3633f.jpg"
+      />
+      <div class="song-details">
+        <span>{{ musicControllerStore.currentSong.title }}</span>
+        <span>{{ musicControllerStore.currentSong.artist }}</span>
+      </div>
+    </div>
     <div class="interface-container">
       <div class="button-container">
         <IconPrevious @click="() => musicControllerStore.playPreviousSong()" />
@@ -32,9 +38,9 @@ onMounted(() => {
         />
         <IconPause v-else @click="() => musicControllerStore.togglePlaying()" />
         <IconNext @click="() => musicControllerStore.playNextSong()" />
-        <VolumeDisplay />
+        <!-- <VolumeDisplay /> -->
       </div>
-      <audio ref="audioPlayer" preload="auto">
+      <audio ref="audioPlayer">
         <source
           :key="musicControllerStore.currentSong.id"
           :src="musicControllerStore.currentSong.url"
@@ -42,35 +48,39 @@ onMounted(() => {
         />
       </audio>
       <div class="time-container">
-        <span
-          >{{ Math.floor(musicControllerStore.currentTime / 60) }}:{{
-            Math.floor(musicControllerStore.currentTime % 60)
-              .toString()
-              .padStart(2, "0")
-          }}
-          / {{ Math.floor(musicControllerStore.currentSong.duration / 60) }}:{{
-            Math.floor(musicControllerStore.currentSong.duration % 60)
-              .toString()
-              .padStart(2, "0")
-          }}</span
-        >
-      </div>
-      <ProgressBar
-        @click="
-          (event: any) =>
-            musicControllerStore.seekTo(
-              (event.offsetX /
-                (event.target.classList.contains('bar') ? event.target : event.target.parentElement)
-                  .clientWidth) *
-                musicControllerStore.currentSong.duration
+        {{ Math.floor(musicControllerStore.currentTime / 60) }}:{{
+          Math.floor(musicControllerStore.currentTime % 60)
+            .toString()
+            .padStart(2, "0")
+        }}
+        <ProgressBar
+          @click="
+            (event: any) =>
+              musicControllerStore.seekTo(
+                (event.offsetX /
+                  (event.target.classList.contains('bar')
+                    ? event.target
+                    : event.target.parentElement
+                  ).clientWidth) *
+                  musicControllerStore.currentSong.duration
+              )
+          "
+          :progressPercentage="
+            Math.floor(
+              (musicControllerStore.currentTime / musicControllerStore.currentSong.duration) * 100
             )
-        "
-        :progressPercentage="
-          Math.floor(
-            (musicControllerStore.currentTime / musicControllerStore.currentSong.duration) * 100
-          )
-        "
-      />
+          "
+        />
+        {{ Math.floor(musicControllerStore.currentSong.duration / 60) }}:{{
+          Math.floor(musicControllerStore.currentSong.duration % 60)
+            .toString()
+            .padStart(2, "0")
+        }}
+      </div>
+    </div>
+
+    <div class="volume-container">
+      <VolumeDisplay />
     </div>
   </div>
 </template>
@@ -78,33 +88,77 @@ onMounted(() => {
 <style scoped>
 .player-container {
   width: 100%;
-  height: 100%;
-
   display: flex;
-  flex-direction: column;
-
   color: white;
-}
 
-.interface-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  & > * {
+    width: 33%;
+  }
 
-  .button-container {
+  .current-song-container {
     display: flex;
-    flex-direction: row;
+
+    img {
+      display: block;
+      height: 85px;
+      width: auto;
+    }
+
+    .song-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      width: 100%;
+
+      & > * {
+        margin: 0.5rem;
+      }
+    }
+  }
+
+  .interface-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    & > * {
+      width: 100%;
+    }
+
+    .button-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      & > * {
+        margin: 0 1rem;
+        flex-grow: 1;
+      }
+    }
+
+    .time-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .bar {
+        margin: 0 1rem;
+      }
+    }
+  }
+
+  .volume-container {
+    display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
 
-    * {
-      margin: 0 1rem;
+    & > * {
       flex-grow: 1;
     }
   }
 }
-
-
 </style>

@@ -5,7 +5,6 @@ import type { Song } from "@/models/SongsOutput";
 defineProps<{
   song: Song;
 }>();
-
 </script>
 
 <template>
@@ -27,10 +26,10 @@ defineProps<{
     </div>
     <div class="song-detail">
       {{ Math.floor(song.duration / 60) }}:{{
-            Math.floor(song.duration % 60)
-              .toString()
-              .padStart(2, "0")
-          }}
+        Math.floor(song.duration % 60)
+          .toString()
+          .padStart(2, "0")
+      }}
     </div>
     <div class="song-detail">
       {{ song.album }}
@@ -42,10 +41,14 @@ defineProps<{
 .song {
   padding: 0.5rem;
   cursor: pointer;
-  border-bottom: 1px solid white;
 
   display: flex;
   justify-content: space-around;
+}
+
+.song:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: background-color 0.2s ease-in-out;
 }
 
 .song-detail {

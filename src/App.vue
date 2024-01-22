@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterLink, RouterView } from "vue-router";
+import NowPlaying from "@/components/NowPlaying.vue";
 </script>
 
 <template>
-  <nav>
-    <RouterLink to="/">Player</RouterLink >
+  <!-- <nav>
+    <RouterLink to="/">Player</RouterLink>
     <RouterLink to="/settings">Settings</RouterLink>
-  </nav>
-  <RouterView class="router-view"/>
+  </nav> -->
+  <main>
+    <RouterView class="router-view" />
+    <NowPlaying />
+  </main>
 </template>
 
 <style scoped>
-.router-view {
-  flex-grow: 9;
+main {
+  /* flex-grow: 9; */
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 }
 
 nav {
@@ -31,7 +40,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: hsla(160, 100%, 37%, 1);
 }
 
 nav a.router-link-exact-active:hover {

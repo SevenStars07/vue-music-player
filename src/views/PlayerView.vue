@@ -1,64 +1,51 @@
 <script setup lang="ts">
-import NowPlaying from "@/components/NowPlaying.vue";
 import { musicStore } from "@/stores/MusicStore";
 import SongDisplay from "@/components/SongDisplay.vue";
-import { ref } from "vue";
-import { type Song } from "@/models/SongsOutput";
-
-const sortKey = ref<keyof Song | "none">("none");
-const sortDirection = ref<"asc" | "desc" | "none">("none");
-
-const sortSongs = (key: keyof Song) => {
-  sortKey.value = key;
-  sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
-  musicStore.sortSongs(key, sortDirection.value);
-};
+import SongTitleDetail from "@/components/SongTitleDetail.vue";
 </script>
 
 <template>
-  <div>
-    <h1>Songs</h1>
-    <div class="songs-container">
-      <div class="song">
-        <div class="song-detail" @click="sortSongs('title')">
-          Title
-          <span v-if="sortKey === 'title' && sortDirection === 'asc'"> ^ </span>
-          <span v-if="sortKey === 'title' && sortDirection === 'desc'"> v </span>
-        </div>
-        <div class="song-detail" @click="sortSongs('artist')">
-          Artist
-          <span v-if="sortKey === 'artist' && sortDirection === 'asc'"> ^ </span>
-          <span v-if="sortKey === 'artist' && sortDirection === 'desc'"> v </span>
-        </div>
-        <div class="song-detail" @click="sortSongs('duration')">
-          Duration
-
-          <span v-if="sortKey === 'duration' && sortDirection === 'asc'"> ^ </span>
-          <span v-if="sortKey === 'duration' && sortDirection === 'desc'"> v </span>
-        </div>
-        <div class="song-detail" @click="sortSongs('album')">
-          Album
-          <span v-if="sortKey === 'album' && sortDirection === 'asc'"> ^ </span>
-          <span v-if="sortKey === 'album' && sortDirection === 'desc'"> v </span>
-        </div>
-      </div>
+  <div class="songs-container">
+    <div class="songs-header">
+      <SongTitleDetail sortKey="title" />
+      <SongTitleDetail sortKey="artist" />
+      <SongTitleDetail sortKey="duration" />
+      <SongTitleDetail sortKey="album" />
+    </div>
+    <div class="songs">
       <SongDisplay v-for="song in musicStore.songs" :song="song" :key="song.id" />
     </div>
-    <NowPlaying />
   </div>
 </template>
 
 <style scoped>
 .songs-container {
+  height: 40rem;
   display: flex;
   flex-direction: column;
-
-  height: 32rem;
-  overflow-y: scroll;
 }
-.song {
+
+.songs {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    padding: 0 0.125rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: #ffffff;
+  }
+}
+
+.songs-header {
   padding: 0.5rem;
-  cursor: pointer;
   border-bottom: 1px solid white;
 
   display: flex;
